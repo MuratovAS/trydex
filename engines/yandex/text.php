@@ -180,7 +180,7 @@ function print_text_results($results)
 
         echo "<div class=\"text-result-wrapper\">";
         echo "<img class=\"favicon-wrapper\" src=\"image_proxy.php?url=https://favicon.yandex.net/favicon/$domain\">";
-        echo "<a href=\"$url\">";
+        echo "<a href=\"$url\" target=\"_blank\">";
         echo urldecode($url);
         echo "<h2>$title</h2>";
         echo "</a>";
