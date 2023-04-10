@@ -87,7 +87,6 @@ a:hover,
 .sub-search-container {
     background-color: var(--search-form-background-color);
     width: 100%;
-    border-bottom: 1px solid var(--border);
 }
 
 .sub-search-container hr {
