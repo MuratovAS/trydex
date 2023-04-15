@@ -37,8 +37,6 @@
                     }
                 }
 
-                $type = isset($_REQUEST["t"]) ? (int) $_REQUEST["t"] : 0;
-                echo "<button class=\"hide\" name=\"t\" value=\"$type\"/></button>";
             ?>
             
         <hr>
@@ -51,10 +49,8 @@
             $start_time = microtime(true);
             $query_parts = explode(" ", $query);
             $last_word_query = end($query_parts);
-            if (substr($query, 0, 1) == "!" || substr($last_word_query, 0, 1) == "!")
-                check_ddg_bang($query);
             
-            require "engines/yandex/text.php";
+            require "engines/yandex.php";
             
             $results = get_text_results($query, $page);
             print_elapsed_time($start_time);
@@ -64,17 +60,16 @@
 
                 if ($page != 0)
                 {
-                    print_next_page_button("&lt;&lt;", 0, $query, $type);
-                    print_next_page_button("&lt;", $page - 10, $query, $type);
+                    print_next_page_button("&lt;&lt;", 0, $query);
+                    print_next_page_button("&lt;", $page - 10, $query);
                 }
 
                 for ($i=$page / 10; $page / 10 + 10 > $i; $i++)
-                    print_next_page_button($i + 1, $i * 10, $query, $type);
+                    print_next_page_button($i + 1, $i * 10, $query);
 
-                print_next_page_button("&gt;", $page + 10, $query, $type);
+                print_next_page_button("&gt;", $page + 10, $query);
 
             echo "</div>";
         ?>
 
-    </body>
-</html>
+<?php require "misc/footer.php"; ?>

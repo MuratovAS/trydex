@@ -7,18 +7,13 @@ function get_text_results($query, $page)
     $query_encoded = urlencode($query);
     $results = array();
 
-    $domain = $config->google_domain;
-    $language = isset($_COOKIE["google_language"]) ? htmlspecialchars($_COOKIE["google_language"]) : $config->google_language;
-
     $url = "https://search.skydns.ru/search/?query=$query_encoded&r=$page";
 
+    $search_ch = curl_init($url);
+    curl_setopt_array($search_ch, $config->curl_settings);
+    curl_multi_add_handle($mh, $search_ch);
 
-
-    $google_ch = curl_init($url);
-    curl_setopt_array($google_ch, $config->curl_settings);
-    curl_multi_add_handle($mh, $google_ch);
-
-    $special_search = $page ? 0 : check_for_special_search($query);
+    $special_search = check_for_special_search($query);
     $special_ch = null;
     $url = null;
     if ($special_search != 0) {
@@ -95,7 +90,7 @@ function get_text_results($query, $page)
             array_push($results, $special_result);
     }
 
-    $xpath = get_xpath(curl_multi_getcontent($google_ch));
+    $xpath = get_xpath(curl_multi_getcontent($search_ch));
 
     /*
     $nodes = $xpath->query("/html/body/div[7]/div/div[11]/div/div[1]/div[1]/p/a");
@@ -109,9 +104,6 @@ function get_text_results($query, $page)
     echo $href . PHP_EOL . "<br>";
     }
     */
-
-
-
 
     foreach ($xpath->query('//*[@class="search-result__wrap"]') as $result) {
         $url = $xpath->evaluate('.//div[@class="search-result__title"]//a/@href', $result)[0];
@@ -128,7 +120,6 @@ function get_text_results($query, $page)
 
         $url = $url->textContent;
 
-        $url = check_for_privacy_frontend($url);
 
         $title = $xpath->evaluate('.//div[@class="search-result__title"]//a', $result)[0];
         $description = $xpath->evaluate('.//div[@class="search-result__passage"]', $result)[0];
